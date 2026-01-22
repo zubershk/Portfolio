@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Mail, Linkedin, MapPin, Menu, X, Briefcase, Code, GraduationCap, ChevronLeft, ChevronRight, ExternalLink, FileText, ChevronDown, ChevronUp, Github } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useInView } from 'framer-motion';
+import { Mail, Linkedin, MapPin, Menu, X, Briefcase, Code, GraduationCap, ChevronLeft, ChevronRight, ExternalLink, FileText, ChevronDown, ChevronUp, Github, Crown, BarChart3, Award, Download } from 'lucide-react';
 import FluidBackground from './components/FluidBackground';
 import GradientText from './components/GlitchText';
 import CustomCursor from './components/CustomCursor';
 import ProjectCard from './components/ProjectCard';
 import { Project, Experience } from './types';
+import './index.css';
 
 // Portfolio Data
 const PROJECTS: Project[] = [
@@ -88,57 +88,94 @@ const EXPERIENCES: Experience[] = [
   },
 ];
 
-// All 43 Skills categorized
+// Skills categorized
 const SKILLS = [
   {
-    category: 'Tools & Technologies',
-    items: ['Docker', 'FastAPI', 'React.js', 'Statsmodels', 'Python', 'MySQL', 'VS Code', 'Git', 'GitHub', 'HTML5', 'CSS', 'JavaScript', 'Canva', 'PowerPoint', 'ChromaDB', 'Plotly', 'LangChain']
-  },
-  {
-    category: 'Industry Knowledge',
-    items: ['SciPy', 'ARIMA', 'NLP', 'Data Analytics', 'Prompt Engineering', 'Web Development', 'Digital Marketing', 'SEO', 'UX Design', 'E-Commerce', 'Responsive Design', 'Research Skills']
+    category: 'Languages & Frameworks',
+    items: ['Python', 'JavaScript', 'React.js', 'FastAPI', 'HTML5', 'CSS', 'Streamlit']
   },
   {
     category: 'AI & Data Science',
-    items: ['Machine Learning', 'Generative AI', 'Power BI', 'Tableau', 'Pandas', 'NumPy', 'Streamlit', 'Data Visualization', 'Predictive Modeling']
+    items: ['Machine Learning', 'Generative AI', 'LangChain', 'NLP', 'Pandas', 'NumPy', 'ARIMA', 'Predictive Modeling']
+  },
+  {
+    category: 'Tools & Platforms',
+    items: ['Docker', 'Git', 'GitHub', 'MySQL', 'ChromaDB', 'VS Code', 'Power BI', 'Tableau', 'Plotly']
   },
   {
     category: 'Soft Skills',
-    items: ['Leadership', 'Collaboration', 'Communication', 'Self Learning', 'Problem Solving', 'Critical Thinking']
+    items: ['Leadership', 'Communication', 'Problem Solving', 'Collaboration', 'Critical Thinking']
   },
 ];
 
 // Curated Relevant Certifications (sorted by relevance & date)
 const ALL_CERTIFICATIONS = [
-  // Industry Simulations (Most Impressive)
   { name: 'GenAI Powered Data Analytics', org: 'Tata iQ (Forage)', year: '2025' },
   { name: 'Data Science Job Simulation', org: 'British Airways (Forage)', year: '2025' },
   { name: 'Data Analytics Job Simulation', org: 'Deloitte (Forage)', year: '2025' },
-
-  // AI & GenAI
   { name: 'Generative AI Mastermind', org: 'Outskill', year: '2025' },
   { name: 'Generative AI Industry Connect', org: 'HCL GUVI', year: '2025' },
   { name: 'AI Agents Bootcamp', org: 'LetsUpgrade', year: '2025' },
   { name: 'Resume Review Agentic System', org: 'Analytics Vidhya', year: '2025' },
   { name: 'Text Classification with NLP', org: 'Analytics Vidhya', year: '2025' },
-
-  // Data Science & Analytics
   { name: 'Python Data Science Fundamentals', org: 'Udemy', year: '2025' },
   { name: 'Data Analyst Certification', org: 'OneRoadmap', year: '2025' },
   { name: 'Mastering SQL with MySQL', org: 'Udemy', year: '2025' },
   { name: 'Power BI Workshop', org: 'Office Master', year: '2025' },
-
-  // Development
   { name: 'React Bootcamp', org: 'LetsUpgrade', year: '2025' },
   { name: 'Python Certification', org: 'OneRoadmap', year: '2025' },
   { name: 'Git & GitHub Bootcamp', org: 'LetsUpgrade', year: '2025' },
   { name: 'N8N Automation Course', org: 'LetsUpgrade', year: '2025' },
   { name: 'Firebase Studio Bootcamp', org: 'LetsUpgrade', year: '2025' },
-
-  // Foundation
   { name: 'Responsive Web Design', org: 'freeCodeCamp', year: '2022' },
   { name: 'Fundamentals of Digital Marketing', org: 'Google', year: '2021' },
 ];
+
+// Typing Animation Component
+const TypeWriter: React.FC<{ text: string; delay?: number }> = ({ text, delay = 50 }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < text.length) {
+        setDisplayText(text.slice(0, index + 1));
+        index++;
+      } else {
+        setIsComplete(true);
+        clearInterval(timer);
+      }
+    }, delay);
+
+    return () => clearInterval(timer);
+  }, [text, delay]);
+
+  useEffect(() => {
+    if (isComplete) {
+      const cursorTimer = setInterval(() => {
+        setShowCursor(prev => !prev);
+      }, 530);
+      return () => clearInterval(cursorTimer);
+    }
+  }, [isComplete]);
+
+  return (
+    <span>
+      {displayText}
+      <span className={`typing-cursor ${showCursor ? 'opacity-100' : 'opacity-0'}`} />
+    </span>
+  );
+};
+
+// Get icon for experience role
+const getRoleIcon = (role: string) => {
+  if (role.toLowerCase().includes('president')) return Crown;
+  if (role.toLowerCase().includes('frontend') || role.toLowerCase().includes('developer')) return Code;
+  if (role.toLowerCase().includes('data')) return BarChart3;
+  return Briefcase;
+};
 
 const App: React.FC = () => {
   const { scrollYProgress } = useScroll();
@@ -147,9 +184,7 @@ const App: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllCerts, setShowAllCerts] = useState(false);
-  const [expandedExperience, setExpandedExperience] = useState<string | null>(null);
 
-  // Handle keyboard navigation for project modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!selectedProject) return;
@@ -168,11 +203,7 @@ const App: React.FC = () => {
       const headerOffset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     }
   };
 
@@ -188,15 +219,10 @@ const App: React.FC = () => {
     setSelectedProject(PROJECTS[nextIndex]);
   };
 
-  const toggleExperience = (id: string) => {
-    setExpandedExperience(expandedExperience === id ? null : id);
-  };
-
   const displayedCerts = showAllCerts ? ALL_CERTIFICATIONS : ALL_CERTIFICATIONS.slice(0, 6);
 
   return (
     <div className="relative min-h-screen text-white selection:bg-[#4fb7b3] selection:text-black cursor-auto md:cursor-none overflow-x-hidden">
-      <Analytics />
       <CustomCursor />
       <FluidBackground />
 
@@ -204,7 +230,6 @@ const App: React.FC = () => {
       <nav className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 md:py-6 mix-blend-difference">
         <div className="font-heading text-lg sm:text-xl md:text-2xl font-bold tracking-tighter text-white cursor-default z-50">ZUBER</div>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex gap-6 lg:gap-10 text-sm font-bold tracking-widest uppercase">
           {['Experience', 'Projects', 'Skills', 'Contact'].map((item) => (
             <button
@@ -218,44 +243,27 @@ const App: React.FC = () => {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-4">
-          <a
-            href="https://github.com/zubershk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#a8fbd3] transition-colors"
-            data-hover="true"
-          >
+          <a href="https://github.com/zubershk" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#a8fbd3] transition-colors" data-hover="true">
             <Github className="w-5 h-5" />
           </a>
-          <a
-            href="https://www.linkedin.com/in/zubershk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-[#a8fbd3] transition-colors"
-            data-hover="true"
-          >
+          <a href="https://www.linkedin.com/in/zubershk" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#a8fbd3] transition-colors" data-hover="true">
             <Linkedin className="w-5 h-5" />
           </a>
-          <a
-            href="mailto:zubershaikh7232@gmail.com"
-            className="text-white hover:text-[#a8fbd3] transition-colors"
-            data-hover="true"
-          >
+          <a href="mailto:zubershaikh7232@gmail.com" className="text-white hover:text-[#a8fbd3] transition-colors" data-hover="true">
             <Mail className="w-5 h-5" />
           </a>
           <a
             href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-white px-6 lg:px-8 py-2 lg:py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent"
+            className="shimmer-btn inline-flex items-center gap-2 border border-white px-6 lg:px-8 py-2 lg:py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent"
             data-hover="true"
           >
-            <FileText className="w-4 h-4" />
+            <Download className="w-4 h-4" />
             Resume
           </a>
         </div>
 
-        {/* Mobile Menu Toggle */}
         <button
           className="md:hidden text-white z-50 relative w-10 h-10 flex items-center justify-center"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -288,7 +296,7 @@ const App: React.FC = () => {
               rel="noopener noreferrer"
               className="mt-8 flex items-center gap-2 border border-white px-10 py-4 text-sm font-bold tracking-widest uppercase bg-white text-black"
             >
-              <FileText className="w-4 h-4" />
+              <Download className="w-4 h-4" />
               Resume
             </a>
 
@@ -305,9 +313,8 @@ const App: React.FC = () => {
       <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden">
         <motion.div
           style={{ y, opacity }}
-          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20"
+          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20 px-4"
         >
-          {/* Role / Location */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -319,14 +326,12 @@ const App: React.FC = () => {
             <span>Mumbai</span>
           </motion.div>
 
-          {/* Main Title */}
           <div className="relative w-full flex justify-center items-center">
             <GradientText
               text="ZUBER"
               as="h1"
               className="text-[18vw] sm:text-[15vw] md:text-[14vw] leading-[0.9] font-black tracking-tighter text-center"
             />
-            {/* Optimized Orb */}
             <motion.div
               className="absolute -z-20 w-[50vw] h-[50vw] bg-white/5 blur-[40px] rounded-full pointer-events-none will-change-transform"
               animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.3, 0.6, 0.3] }}
@@ -342,13 +347,14 @@ const App: React.FC = () => {
             className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-white/50 to-transparent mt-4 md:mt-8 mb-6 md:mb-8"
           />
 
+          {/* Typing Animation Tagline */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 1 }}
-            className="text-lg sm:text-xl md:text-2xl font-normal max-w-xl mx-auto text-white leading-relaxed drop-shadow-lg px-4 text-center"
+            className="text-lg sm:text-xl md:text-2xl font-normal max-w-xl mx-auto text-white leading-relaxed drop-shadow-lg text-center h-[2em] sm:h-auto"
           >
-            Building scalable solutions with data-driven insights
+            <TypeWriter text="Building scalable solutions with data-driven insights" delay={40} />
           </motion.p>
         </motion.div>
 
@@ -375,86 +381,90 @@ const App: React.FC = () => {
 
       {/* EXPERIENCE SECTION */}
       <section id="experience" className="relative z-10 py-16 sm:py-20 md:py-32 bg-black/20 backdrop-blur-sm border-t border-white/10 overflow-hidden">
-        {/* Decorative blurred circle */}
         <div className="absolute top-1/2 right-[-20%] w-[50vw] h-[50vw] bg-[#4fb7b3]/20 rounded-full blur-[40px] pointer-events-none will-change-transform" style={{ transform: 'translateZ(0)' }} />
+        <div className="absolute bottom-0 left-[-10%] w-[30vw] h-[30vw] bg-[#a8fbd3]/10 rounded-full blur-[60px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 md:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.9] drop-shadow-lg break-words w-full md:w-auto">
-              My <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a8fbd3] to-[#4fb7b3]">Journey</span>
-            </h2>
+        <div className="max-w-6xl mx-auto px-4 md:px-6 relative">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.9] drop-shadow-lg"
+            >
+              My <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a8fbd3] to-[#4fb7b3]">Journey</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-white/60 font-mono uppercase tracking-widest mt-4 text-xs sm:text-sm"
+            >
+              Where I've made an impact
+            </motion.p>
           </div>
 
-          <div className="space-y-4 sm:space-y-6 md:space-y-8">
+          {/* Experience Cards */}
+          <div className="space-y-6 md:space-y-8">
             {EXPERIENCES.map((exp, index) => (
               <motion.div
                 key={exp.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="p-4 sm:p-6 md:p-10 border border-white/10 backdrop-blur-md bg-black/20 hover:bg-black/40 transition-colors duration-300"
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.15,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                viewport={{ once: true, margin: "-50px" }}
+                className="group relative"
               >
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-white">{exp.role}</h3>
-                      <p className="text-[#4fb7b3] font-medium text-base sm:text-lg">{exp.company}</p>
+                {/* Animated Gradient Border */}
+                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[#4fb7b3] via-[#a8fbd3] to-[#4fb7b3] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[#4fb7b3] via-[#a8fbd3] to-[#4fb7b3] opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
+
+                {/* Card Content */}
+                <div className="relative p-6 sm:p-8 md:p-10 bg-black/50 backdrop-blur-xl rounded-2xl border border-white/10 group-hover:border-transparent transition-all duration-500 overflow-hidden">
+
+                  {/* Header */}
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-white group-hover:text-[#a8fbd3] transition-colors duration-300">
+                        {exp.role}
+                      </h3>
+                      <p className="text-[#4fb7b3] font-semibold text-lg sm:text-xl mt-1">{exp.company}</p>
                     </div>
-                    <div className="flex flex-col sm:items-end">
-                      <p className="text-white/80 font-mono text-xs sm:text-sm">{exp.period}</p>
-                      <p className="text-white/50 text-xs sm:text-sm flex items-center gap-2">
-                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+
+                    <div className="flex flex-row md:flex-col md:items-end gap-3 md:gap-2">
+                      <span className="px-4 py-2 rounded-full bg-[#4fb7b3]/10 border border-[#4fb7b3]/30 text-[#a8fbd3] font-mono text-xs sm:text-sm whitespace-nowrap">
+                        {exp.period}
+                      </span>
+                      <span className="text-white/50 text-sm flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
                         {exp.location}
-                      </p>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Mobile: Collapsible highlights */}
-                  <div className="md:hidden">
-                    <button
-                      onClick={() => toggleExperience(exp.id)}
-                      className="flex items-center gap-2 text-[#a8fbd3] text-sm font-medium bg-transparent border border-[#a8fbd3]/30 px-4 py-2 rounded-full hover:bg-[#a8fbd3]/10 transition-colors w-full justify-center"
-                    >
-                      {expandedExperience === exp.id ? (
-                        <>
-                          <ChevronUp className="w-4 h-4" />
-                          Hide Details
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="w-4 h-4" />
-                          View Details
-                        </>
-                      )}
-                    </button>
-                    <AnimatePresence>
-                      {expandedExperience === exp.id && (
-                        <motion.ul
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-2 mt-4 overflow-hidden"
-                        >
-                          {exp.highlights.map((highlight, i) => (
-                            <li key={i} className="flex items-start gap-3 text-gray-300 text-sm">
-                              <span className="w-1.5 h-1.5 bg-[#a8fbd3] rounded-full mt-1.5 shrink-0" />
-                              {highlight}
-                            </li>
-                          ))}
-                        </motion.ul>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  {/* Divider */}
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6" />
 
-                  {/* Desktop: Always visible highlights */}
-                  <ul className="hidden md:block space-y-3 mt-4">
+                  {/* Highlights */}
+                  <ul className="space-y-3">
                     {exp.highlights.map((highlight, i) => (
-                      <li key={i} className="flex items-start gap-3 text-gray-300">
-                        <span className="w-1.5 h-1.5 bg-[#a8fbd3] rounded-full mt-2 shrink-0" />
-                        {highlight}
-                      </li>
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 + 0.2 + i * 0.05 }}
+                        viewport={{ once: true }}
+                        className="flex items-start gap-4 text-gray-300"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#a8fbd3] to-[#4fb7b3] mt-2 shrink-0" />
+                        <span className="text-sm sm:text-base leading-relaxed">{highlight}</span>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
@@ -468,7 +478,7 @@ const App: React.FC = () => {
       <section id="projects" className="relative z-10 py-16 sm:py-20 md:py-32">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-12 md:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.9] drop-shadow-lg break-words w-full md:w-auto">
+            <h2 className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.9] drop-shadow-lg">
               Featured <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a8fbd3] to-[#4fb7b3]">Work</span>
             </h2>
@@ -485,15 +495,21 @@ const App: React.FC = () => {
       {/* SKILLS SECTION */}
       <section id="skills" className="relative z-10 py-16 sm:py-20 md:py-32 px-4 md:px-6 bg-black/30 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-12 md:mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-9xl font-heading font-bold opacity-20 text-white">
-              SKILLS
-            </h2>
-            <p className="text-[#a8fbd3] font-mono uppercase tracking-widest -mt-2 sm:-mt-3 md:-mt-8 relative z-10 text-xs sm:text-sm md:text-base">
+          <div className="text-center mb-10 sm:mb-14 md:mb-20">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold uppercase drop-shadow-lg"
+            >
+              My <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a8fbd3] to-[#4fb7b3]">Skills</span>
+            </motion.h2>
+            <p className="text-[#a8fbd3] font-mono uppercase tracking-widest mt-4 text-xs sm:text-sm md:text-base">
               Technologies I work with
             </p>
           </div>
 
+          {/* Skills Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {SKILLS.map((skillGroup, i) => (
               <motion.div
@@ -502,14 +518,16 @@ const App: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="p-4 sm:p-6 md:p-8 border border-white/10 backdrop-blur-md bg-black/20"
+                className="p-5 sm:p-6 md:p-8 border border-white/10 backdrop-blur-md bg-black/20 rounded-xl hover:border-[#4fb7b3]/30 transition-all duration-300"
               >
-                <h3 className="text-lg sm:text-xl font-heading font-bold mb-4 sm:mb-6 text-[#4fb7b3]">{skillGroup.category}</h3>
+                <h3 className="text-lg sm:text-xl font-heading font-bold mb-4 sm:mb-6 text-[#4fb7b3]">
+                  {skillGroup.category}
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {skillGroup.items.map((skill, j) => (
                     <span
                       key={j}
-                      className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm border border-white/20 rounded-full text-white/80 hover:bg-white/10 transition-colors"
+                      className="skill-tag px-3 py-1.5 text-xs sm:text-sm border border-white/20 rounded-full text-white/80 cursor-default"
                     >
                       {skill}
                     </span>
@@ -524,28 +542,34 @@ const App: React.FC = () => {
       {/* EDUCATION & CERTIFICATIONS */}
       <section className="relative z-10 py-16 sm:py-20 md:py-32 bg-black/20 backdrop-blur-sm border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
-          {/* Education */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-heading font-bold mb-8 md:mb-12 leading-tight">
               <GradientText text="EDUCATION" className="text-4xl sm:text-5xl md:text-7xl" />
             </h2>
 
-            <div className="flex items-start gap-4 sm:gap-6 p-6 md:p-8 border border-white/10 bg-black/20 backdrop-blur-md max-w-xl">
-              <div className="p-3 sm:p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/5 shrink-0">
-                <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex items-start gap-4 sm:gap-6 p-6 md:p-8 border border-white/10 bg-black/20 backdrop-blur-md max-w-xl rounded-xl hover:border-[#4fb7b3]/30 transition-colors"
+            >
+              <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-[#a8fbd3]/20 to-[#4fb7b3]/20 backdrop-blur-md border border-white/10 shrink-0">
+                <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-[#a8fbd3]" />
               </div>
               <div>
                 <h4 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 font-heading">B.Sc. Data Science</h4>
                 <p className="text-sm sm:text-base text-[#4fb7b3]">Thakur Specialized Degree College</p>
                 <p className="text-xs sm:text-sm text-gray-400">University of Mumbai • Expected 2027</p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Certifications */}
           <div>
             <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <h3 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-white">Certifications</h3>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-white flex items-center gap-3">
+                <Award className="w-8 h-8 text-[#4fb7b3] hidden sm:block" />
+                Certifications
+              </h3>
               <span className="text-[#a8fbd3] font-mono text-xs sm:text-sm">{ALL_CERTIFICATIONS.length} Featured</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -556,18 +580,17 @@ const App: React.FC = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.03 }}
                   viewport={{ once: true }}
-                  className="p-3 sm:p-4 border border-white/10 bg-black/20 hover:bg-black/40 transition-colors"
+                  className="p-4 sm:p-5 border border-white/10 bg-black/20 hover:bg-black/40 transition-all duration-300 rounded-xl hover:border-[#4fb7b3]/30 group"
                 >
-                  <p className="font-medium text-white text-sm sm:text-base line-clamp-1">{cert.name}</p>
-                  <p className="text-xs sm:text-sm text-gray-400">{cert.org} • {cert.year}</p>
+                  <p className="font-medium text-white text-sm sm:text-base line-clamp-1 group-hover:text-[#a8fbd3] transition-colors">{cert.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 mt-1">{cert.org} • {cert.year}</p>
                 </motion.div>
               ))}
             </div>
 
-            {/* View More Button */}
             <motion.button
               onClick={() => setShowAllCerts(!showAllCerts)}
-              className="mt-6 sm:mt-8 w-full py-3 sm:py-4 border border-[#4fb7b3]/50 text-[#a8fbd3] font-bold uppercase tracking-widest text-xs sm:text-sm hover:bg-[#4fb7b3]/10 transition-colors flex items-center justify-center gap-2"
+              className="shimmer-btn mt-6 sm:mt-8 w-full py-3 sm:py-4 border border-[#4fb7b3]/50 text-[#a8fbd3] font-bold uppercase tracking-widest text-xs sm:text-sm hover:bg-[#4fb7b3]/10 transition-colors flex items-center justify-center gap-2 rounded-xl"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -593,14 +616,14 @@ const App: React.FC = () => {
           <h2 className="text-4xl sm:text-5xl md:text-8xl font-heading font-bold mb-6 sm:mb-8">
             Let's <GradientText text="Connect" className="text-4xl sm:text-5xl md:text-8xl" />
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto">
             Got a project in mind? Let's build something amazing together.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
             <a
               href="mailto:zubershaikh7232@gmail.com"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-[#a8fbd3] transition-colors"
+              className="shimmer-btn w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-[#a8fbd3] transition-colors rounded-xl"
               data-hover="true"
             >
               <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -610,7 +633,7 @@ const App: React.FC = () => {
               href="https://www.linkedin.com/in/zubershk"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors"
+              className="shimmer-btn w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors rounded-xl"
               data-hover="true"
             >
               <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -620,7 +643,7 @@ const App: React.FC = () => {
               href="https://github.com/zubershk"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors"
+              className="shimmer-btn w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors rounded-xl"
               data-hover="true"
             >
               <Github className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -635,6 +658,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="relative z-10 border-t border-white/10 py-8 sm:py-12 md:py-16 bg-black/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-6 sm:gap-8">
           <div className="text-center md:text-left">
@@ -660,99 +684,95 @@ const App: React.FC = () => {
 
       {/* Project Detail Modal */}
       <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedProject(null)}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-md cursor-auto"
-          >
+        {
+          selectedProject && (
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#1a1b3b] border border-white/10 flex flex-col md:flex-row shadow-2xl shadow-[#4fb7b3]/10 group/modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProject(null)}
+              className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-md cursor-auto"
             >
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors"
-                data-hover="true"
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#1a1b3b] border border-white/10 flex flex-col md:flex-row shadow-2xl shadow-[#4fb7b3]/10 rounded-2xl"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-
-              {/* Navigation Buttons */}
-              <button
-                onClick={(e) => { e.stopPropagation(); navigateProject('prev'); }}
-                className="absolute left-2 sm:left-4 bottom-4 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-sm"
-                data-hover="true"
-                aria-label="Previous Project"
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-
-              <button
-                onClick={(e) => { e.stopPropagation(); navigateProject('next'); }}
-                className="absolute right-2 sm:right-4 bottom-4 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-sm md:right-8"
-                data-hover="true"
-                aria-label="Next Project"
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-
-              {/* Image Side */}
-              <div className="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative overflow-hidden shrink-0">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedProject.id}
-                    src={selectedProject.image}
-                    alt={selectedProject.name}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </AnimatePresence>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b3b] via-transparent to-transparent md:bg-gradient-to-r" />
-              </div>
-
-              {/* Content Side */}
-              <div className="w-full md:w-1/2 p-6 pb-20 sm:p-8 sm:pb-24 md:p-12 flex flex-col justify-center relative">
-                <motion.div
-                  key={selectedProject.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors"
+                  data-hover="true"
                 >
-                  <div className="flex items-center gap-3 text-[#4fb7b3] mb-3 sm:mb-4">
-                    <Code className="w-4 h-4" />
-                    <span className="font-mono text-xs sm:text-sm tracking-widest uppercase">{selectedProject.category}</span>
-                  </div>
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
 
-                  <h3 className="text-3xl sm:text-4xl md:text-6xl font-heading font-bold uppercase leading-none mb-2 text-white">
-                    {selectedProject.name}
-                  </h3>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigateProject('prev'); }}
+                  className="absolute left-2 sm:left-4 bottom-4 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-sm"
+                  data-hover="true"
+                >
+                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
 
-                  <p className="text-base sm:text-lg text-[#a8fbd3] font-medium tracking-widest uppercase mb-4 sm:mb-6">
-                    {selectedProject.tech}
-                  </p>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigateProject('next'); }}
+                  className="absolute right-2 sm:right-4 bottom-4 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-sm md:right-8"
+                  data-hover="true"
+                >
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
 
-                  <div className="h-px w-20 bg-white/20 mb-4 sm:mb-6" />
+                <div className="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative overflow-hidden shrink-0 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={selectedProject.id}
+                      src={selectedProject.image}
+                      alt={selectedProject.name}
+                      initial={{ opacity: 0, scale: 1.1 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </AnimatePresence>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1b3b] via-transparent to-transparent md:bg-gradient-to-r" />
+                </div>
 
-                  <p className="text-gray-300 leading-relaxed text-sm sm:text-base md:text-lg font-light">
-                    {selectedProject.description}
-                  </p>
-                </motion.div>
-              </div>
+                <div className="w-full md:w-1/2 p-6 pb-20 sm:p-8 sm:pb-24 md:p-12 flex flex-col justify-center relative">
+                  <motion.div
+                    key={selectedProject.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                  >
+                    <div className="flex items-center gap-3 text-[#4fb7b3] mb-3 sm:mb-4">
+                      <Code className="w-4 h-4" />
+                      <span className="font-mono text-xs sm:text-sm tracking-widest uppercase">{selectedProject.category}</span>
+                    </div>
+
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold uppercase leading-none mb-2 text-white">
+                      {selectedProject.name}
+                    </h3>
+
+                    <p className="text-sm sm:text-base text-[#a8fbd3] font-medium tracking-widest uppercase mb-4 sm:mb-6">
+                      {selectedProject.tech}
+                    </p>
+
+                    <div className="h-px w-20 bg-white/20 mb-4 sm:mb-6" />
+
+                    <p className="text-gray-300 leading-relaxed text-sm sm:text-base font-light">
+                      {selectedProject.description}
+                    </p>
+                  </motion.div>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
+          )
+        }
       </AnimatePresence>
-    </div >
+    </div>
   );
 };
 
