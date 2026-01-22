@@ -215,16 +215,43 @@ const App: React.FC = () => {
             </button>
           ))}
         </div>
-        <a
-          href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden md:inline-flex items-center gap-2 border border-white px-6 lg:px-8 py-2 lg:py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent"
-          data-hover="true"
-        >
-          <FileText className="w-4 h-4" />
-          Resume
-        </a>
+        <div className="hidden md:flex items-center gap-4">
+          <a
+            href="https://github.com/zubershk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-[#a8fbd3] transition-colors"
+            data-hover="true"
+          >
+            <Github className="w-5 h-5" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/zubershk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-[#a8fbd3] transition-colors"
+            data-hover="true"
+          >
+            <Linkedin className="w-5 h-5" />
+          </a>
+          <a
+            href="mailto:zubershaikh7232@gmail.com"
+            className="text-white hover:text-[#a8fbd3] transition-colors"
+            data-hover="true"
+          >
+            <Mail className="w-5 h-5" />
+          </a>
+          <a
+            href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-white px-6 lg:px-8 py-2 lg:py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent"
+            data-hover="true"
+          >
+            <FileText className="w-4 h-4" />
+            Resume
+          </a>
+        </div>
 
         {/* Mobile Menu Toggle */}
         <button
@@ -264,14 +291,16 @@ const App: React.FC = () => {
             </a>
 
             <div className="absolute bottom-10 flex gap-6">
-              <a href="https://www.linkedin.com/in/zubershk" className="text-white/50 hover:text-white transition-colors">LinkedIn</a>
+              <a href="https://github.com/zubershk" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">GitHub</a>
+              <a href="https://www.linkedin.com/in/zubershk" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">LinkedIn</a>
+              <a href="mailto:zubershaikh7232@gmail.com" className="text-white/50 hover:text-white transition-colors">Email</a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* HERO SECTION */}
-      <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden px-4">
+      <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden">
         <motion.div
           style={{ y, opacity }}
           className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20"
@@ -315,14 +344,14 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 1 }}
-            className="text-sm sm:text-base md:text-2xl font-light max-w-xl mx-auto text-white/90 leading-relaxed drop-shadow-lg px-4 whitespace-nowrap"
+            className="text-base sm:text-lg md:text-2xl font-light max-w-xl mx-auto text-white/90 leading-relaxed drop-shadow-lg px-4 text-center"
           >
             Building scalable solutions with data-driven insights
           </motion.p>
         </motion.div>
 
         {/* MARQUEE */}
-        <div className="absolute bottom-12 md:bottom-16 left-0 w-full py-3 sm:py-4 md:py-6 bg-white text-black z-20 overflow-hidden border-y-4 border-black shadow-[0_0_40px_rgba(255,255,255,0.4)]">
+        <div className="absolute bottom-0 left-0 w-full py-3 sm:py-4 md:py-6 bg-white text-black z-20 overflow-hidden border-y-4 border-black shadow-[0_0_40px_rgba(255,255,255,0.4)]">
           <motion.div
             className="flex w-fit will-change-transform"
             animate={{ x: "-50%" }}
