@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Mail, Linkedin, MapPin, Menu, X, Briefcase, Code, GraduationCap, ChevronLeft, ChevronRight, ExternalLink, FileText, ChevronDown, ChevronUp, Github } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import FluidBackground from './components/FluidBackground';
 import GradientText from './components/GlitchText';
 import CustomCursor from './components/CustomCursor';
@@ -195,6 +196,7 @@ const App: React.FC = () => {
 
   return (
     <div className="relative min-h-screen text-white selection:bg-[#4fb7b3] selection:text-black cursor-auto md:cursor-none overflow-x-hidden">
+      <Analytics />
       <CustomCursor />
       <FluidBackground />
 
