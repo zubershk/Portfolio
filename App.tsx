@@ -344,7 +344,7 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 1 }}
-            className="text-base sm:text-lg md:text-2xl font-light max-w-xl mx-auto text-white/90 leading-relaxed drop-shadow-lg px-4 text-center"
+            className="text-lg sm:text-xl md:text-2xl font-normal max-w-xl mx-auto text-white leading-relaxed drop-shadow-lg px-4 text-center"
           >
             Building scalable solutions with data-driven insights
           </motion.p>
