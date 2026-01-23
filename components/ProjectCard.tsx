@@ -70,6 +70,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                     <motion.img
                         src={project.image}
                         alt={project.name}
+                        loading="lazy"
                         className="h-full w-full object-cover grayscale will-change-transform"
                         variants={{
                             rest: { scale: 1, opacity: 0.6, filter: 'grayscale(100%)' },
