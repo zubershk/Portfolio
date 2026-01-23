@@ -254,7 +254,7 @@ const App: React.FC = () => {
             <Mail className="w-5 h-5" />
           </a>
           <a
-            href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
+            href="https://drive.google.com/file/d/1WKP_IAEvfW0KLbSmHZSzKiisERIkbLrr/view"
             target="_blank"
             rel="noopener noreferrer"
             className="shimmer-btn inline-flex items-center gap-2 border border-white px-6 lg:px-8 py-2 lg:py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent"
@@ -292,7 +292,7 @@ const App: React.FC = () => {
               </button>
             ))}
             <a
-              href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
+              href="https://drive.google.com/file/d/1WKP_IAEvfW0KLbSmHZSzKiisERIkbLrr/view"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 flex items-center gap-2 border border-white px-10 py-4 text-sm font-bold tracking-widest uppercase bg-white text-black"
