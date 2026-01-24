@@ -10,6 +10,9 @@ export interface Project {
   image: string;
   tech: string;
   description: string;
+  githubLink?: string;
+  liveLink?: string;
+  linkedinLink?: string;
 }
 
 export interface Experience {

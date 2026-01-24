@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, useInView } from 'framer-motion';
 import { Mail, Linkedin, MapPin, Menu, X, Briefcase, Code, GraduationCap, ChevronLeft, ChevronRight, ExternalLink, FileText, ChevronDown, ChevronUp, Github, Crown, BarChart3, Award, Download } from 'lucide-react';
@@ -22,7 +17,9 @@ const PROJECTS: Project[] = [
     category: 'AI/ML',
     tech: 'Python • FastAPI • React • LangChain',
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1000&auto=format&fit=crop',
-    description: 'Co-developed an AI-powered legal aid platform for Indian citizens. Integrated Groq\'s Llama 3.3 70B model for instant legal counsel, implemented Whisper-large-v3 for multilingual voice pipeline (Hindi/English/Hinglish), and built a full-stack architecture with React 18, FastAPI, and ChromaDB. Simplifies FIR filing as an AI "Station House Officer".'
+    description: 'Co-developed an AI-powered legal aid platform for Indian citizens. Integrated Groq\'s Llama 3.3 70B model for instant legal counsel, implemented Whisper-large-v3 for multilingual voice pipeline (Hindi/English/Hinglish), and built a full-stack architecture with React 18, FastAPI, and ChromaDB. Simplifies FIR filing as an AI "Station House Officer".',
+    githubLink: 'https://github.com/zubershk/Nyay-Sahayak-react-UI',
+    liveLink: 'https://nyay-sahayak-gray.vercel.app/'
   },
   {
     id: '2',
@@ -30,7 +27,9 @@ const PROJECTS: Project[] = [
     category: 'Data Science',
     tech: 'Python • Streamlit • ARIMA • Plotly',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop',
-    description: 'Developed a production-grade analytical system for UIDAI Data Hackathon 2026. Engineered Mann-Kendall trend tests and ARIMA forecasting to detect declining Aadhaar updates. Processed 1.2M+ records and built interactive dashboards with geospatial heatmaps for 36 states/UTs. Identified 26 states with significant declining trends.'
+    description: 'Developed a production-grade analytical system for UIDAI Data Hackathon 2026. Engineered Mann-Kendall trend tests and ARIMA forecasting to detect declining Aadhaar updates. Processed 1.2M+ records and built interactive dashboards with geospatial heatmaps for 36 states/UTs. Identified 26 states with significant declining trends.',
+    githubLink: 'https://github.com/zubershk/UIDAI-Analytical-Dashboard',
+    liveLink: 'https://uidai-analytical-dash.streamlit.app/'
   },
   {
     id: '3',
@@ -38,7 +37,9 @@ const PROJECTS: Project[] = [
     category: 'Leadership',
     tech: 'Community • Events • Tech',
     image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop',
-    description: 'Founded and scaled TechTeenz Technical Club at TSPDC, establishing a Project-First, Peer-Led learning model for 100+ students with hackathons, bootcamps, and career readiness programs.'
+    description: 'Founded and scaled TechTeenz Technical Club at TSPDC, establishing a Project-First, Peer-Led learning model for 100+ students with hackathons, bootcamps, and career readiness programs.',
+    linkedinLink: 'https://www.linkedin.com/company/techteenz',
+    liveLink: 'https://techteenz.netlify.app/'
   },
   {
     id: '4',
@@ -265,12 +266,24 @@ const App: React.FC = () => {
           </a>
         </div>
 
-        <button
-          className="md:hidden text-white z-50 relative w-10 h-10 flex items-center justify-center"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex md:hidden items-center gap-3">
+          <a
+            href="https://drive.google.com/file/d/13V8wqoLc9JdkMkvslfTgYXIhWoDTy9Xq/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 border border-white px-4 py-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300 text-white cursor-pointer bg-transparent rounded-full"
+            data-hover="true"
+          >
+            <Download className="w-3 h-3" />
+            <span className="hidden xs:inline">Resume</span>
+          </a>
+          <button
+            className="text-white z-50 relative w-10 h-10 flex items-center justify-center type-button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Menu Overlay */}
@@ -766,6 +779,44 @@ const App: React.FC = () => {
                     <p className="text-gray-300 leading-relaxed text-sm sm:text-base font-light">
                       {selectedProject.description}
                     </p>
+
+                    <div className="flex flex-wrap gap-4 mt-8">
+                      {selectedProject.githubLink && (
+                        <a
+                          href={selectedProject.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-[#a8fbd3] transition-colors rounded-xl"
+                        >
+                          <Github className="w-4 h-4" />
+                          View Code
+                        </a>
+                      )}
+
+                      {selectedProject.linkedinLink && (
+                        <a
+                          href={selectedProject.linkedinLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-6 py-3 bg-[#0a66c2] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#004182] transition-colors rounded-xl"
+                        >
+                          <Linkedin className="w-4 h-4" />
+                          Company Page
+                        </a>
+                      )}
+
+                      {selectedProject.liveLink && (
+                        <a
+                          href={selectedProject.liveLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-6 py-3 border border-white/30 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors rounded-xl"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          Live Demo
+                        </a>
+                      )}
+                    </div>
                   </motion.div>
                 </div>
               </motion.div>
