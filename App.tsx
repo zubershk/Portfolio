@@ -275,7 +275,7 @@ const App: React.FC = () => {
             data-hover="true"
           >
             <Download className="w-3 h-3" />
-            <span className="hidden xs:inline">Resume</span>
+            <span>Resume</span>
           </a>
           <button
             className="text-white z-50 relative w-10 h-10 flex items-center justify-center type-button"
