@@ -1,11 +1,11 @@
 # Robots.txt for Zuber Shaikh Portfolio
-# https://zubershk.online
+# https://zubershaikh.dev
 
 User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://zubershk.online/sitemap.xml
+Sitemap: https://zubershaikh.dev/sitemap.xml
 
 # Crawl-delay for polite crawling
 Crawl-delay: 1

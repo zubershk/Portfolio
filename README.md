@@ -3,7 +3,7 @@
 Personal portfolio website showcasing my work as a **Full Stack Developer** and **Data Science Student** from Mumbai, India.
 
 ## Live Site
-[zubershk.online](https://zubershk.online)
+[zubershaikh.dev](https://zubershaikh.dev)
 
 ## Features
 - **Responsive Design** - Works seamlessly on all devices
